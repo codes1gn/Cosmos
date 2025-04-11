@@ -173,5 +173,7 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# Cosmos sandbox metadata
-sandbox_*
+# Cosmos non-coupled subrepos, not using gitsubmodule for flexibility and extensibility.
+# Be careful that all correctness are ensured by invoke declaration, not by build system.
+# This is a two-sided blade
+Quark/
