@@ -135,6 +135,32 @@ def clean(ctx):
         ctx.run(f"rm -rf {pattern}")
         print(f"Removed {pattern}.")
 
+@task
+def group_commit(ctx, m):
+    """
+    Perform git add, git commit, and git push for Cosmos and quark subdirectory.
+    Usage: inv group-commit -m="<your_message>"
+    """
+    # Define directories
+    cosmos_dir = "."
+    quark_dir = os.path.join(cosmos_dir, "quark")
+
+    # Perform git operations for Cosmos
+    print("Committing changes in Cosmos...")
+    with ctx.cd(cosmos_dir):
+        ctx.run("git add .")
+        ctx.run(f'git commit -m "{m}"')
+        ctx.run("git push")
+
+    # Perform git operations for quark
+    print("Committing changes in quark...")
+    with ctx.cd(quark_dir):
+        ctx.run("git add .")
+        ctx.run(f'git commit -m "{m}"')
+        ctx.run("git push")
+
+    print("Group commit and push completed successfully!")
+
 #################################################################################
 ####  Quark  ####
 #################################################################################
