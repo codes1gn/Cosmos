@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import sys
@@ -11,6 +12,7 @@ CURRENT_PYTHON_VERSION = f"{sys.version_info.major}.{sys.version_info.minor}"
 #################################################################################
 ####  Cosmos Setup  ####
 #################################################################################
+
 
 def get_venv_name():
     """
@@ -52,6 +54,13 @@ def with_venv(func):
                 return func(ctx, *args, **kwargs)
 
     return wrapper
+
+
+def load_config():
+    """Load project configuration from config.json."""
+    with open("repositories.json", "r") as f:
+        config = json.load(f)
+    return config["projects"]
 
 
 @task
@@ -97,9 +106,11 @@ def bootstrap(ctx, python_version=CURRENT_PYTHON_VERSION):
     """
     pass
 
+
 #################################################################################
 ####  Cosmos Utils  ####
 #################################################################################
+
 
 @task
 @with_venv
@@ -115,6 +126,7 @@ def format(ctx):
         print("Formatting code...")
         ctx.run("black .")
         ctx.run("isort .")
+
 
 @task
 def clean(ctx):
@@ -135,6 +147,7 @@ def clean(ctx):
         ctx.run(f"rm -rf {pattern}")
         print(f"Removed {pattern}.")
 
+
 @task
 def group_commit(ctx, m):
     """
@@ -143,7 +156,7 @@ def group_commit(ctx, m):
     """
     # Define directories
     cosmos_dir = "."
-    quark_dir = os.path.join(cosmos_dir, "Quark")
+    subprojects = load_config()
 
     # Perform git operations for Cosmos
     print("Committing changes in Cosmos...")
@@ -152,18 +165,24 @@ def group_commit(ctx, m):
         ctx.run(f'git commit -m "{m}"')
         ctx.run("git push")
 
-    # Perform git operations for quark
-    print("Committing changes in quark...")
-    with ctx.cd(quark_dir):
-        ctx.run("git add .")
-        ctx.run(f'git commit -m "{m}"')
-        ctx.run("git push")
+    # Perform git operations for subprojects
+    for project in projects:
+        project_name = project["name"]
+        project_dir = os.path.join(".", project_name)
+
+        print(f"Committing changes in {project_name}...")
+        with ctx.cd(project_dir):
+            ctx.run("git add .")
+            ctx.run(f'git commit -m "{m}"')
+            ctx.run("git push")
 
     print("Group commit and push completed successfully!")
+
 
 #################################################################################
 ####  Quark  ####
 #################################################################################
+
 
 @task
 def pull_quark(ctx):
