@@ -143,7 +143,7 @@ def group_commit(ctx, m):
     """
     # Define directories
     cosmos_dir = "."
-    quark_dir = os.path.join(cosmos_dir, "quark")
+    quark_dir = os.path.join(cosmos_dir, "Quark")
 
     # Perform git operations for Cosmos
     print("Committing changes in Cosmos...")
