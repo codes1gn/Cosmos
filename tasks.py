@@ -156,7 +156,7 @@ def group_commit(ctx, m):
     """
     # Define directories
     cosmos_dir = "."
-    subprojects = load_config()
+    projects = load_config()
 
     # Perform git operations for Cosmos
     print("Committing changes in Cosmos...")
