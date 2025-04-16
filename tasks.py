@@ -203,7 +203,7 @@ def build_quark(ctx):
     Build the Quark project using Poetry, ensuring no new virtualenv is created.
     """
     with ctx.cd("Quark"):
-        ctx.run("poetry install --no-venv")
+        ctx.run("poetry install")
         print("Quark project built.")
 
 
@@ -219,7 +219,8 @@ def test_quark(ctx):
 
 
 @task
-def all(ctx, python_version=CURRENT_PYTHON_VERSION):
+@with_venv
+def build(ctx, python_version=CURRENT_PYTHON_VERSION):
     """
     Execute all tasks: bootstrap (create virtualenv, configure Poetry, install dependencies),
     pull Quark, build Quark, and run tests.
