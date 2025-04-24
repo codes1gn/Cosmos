@@ -4,7 +4,7 @@ import shutil
 import sys
 from functools import wraps
 
-from invoke import task
+from invoke import task, Collection, Context
 
 # Get the current Python version
 CURRENT_PYTHON_VERSION = f"{sys.version_info.major}.{sys.version_info.minor}"
@@ -197,7 +197,6 @@ def pull_quark(ctx):
 
 
 @task
-@with_venv
 def build_quark(ctx):
     """
     Build the Quark project using Poetry, ensuring no new virtualenv is created.
@@ -208,13 +207,12 @@ def build_quark(ctx):
 
 
 @task
-@with_venv
 def test_quark(ctx):
     """
     Run tests for the Quark project.
     """
     with ctx.cd("Quark"):
-        ctx.run("poetry run pytest")
+        ctx.run("quark test")
         print("Quark tests completed.")
 
 
@@ -229,3 +227,13 @@ def build(ctx, python_version=CURRENT_PYTHON_VERSION):
     pull_quark(ctx)
     build_quark(ctx)
     test_quark(ctx)
+
+# Create a namespace for the tasks
+namespace = Collection(
+    format,
+    clean,
+    group_commit,
+    pull_quark,
+    build_quark,
+    test_quark,
+)
